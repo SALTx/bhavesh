@@ -6,6 +6,7 @@ include 'database.php';
 
 // Check if the user is logged in
 $is_logged_in = isset($_SESSION['username']);
+$current_user = $is_logged_in ? $_SESSION['username'] : null;
 $is_admin = $is_logged_in && $_SESSION['role'] == 'admin';
 
 // Fetch events and their participants
@@ -33,6 +34,7 @@ if ($result->num_rows > 0) {
             </tr>";
     while($row = $result->fetch_assoc()) {
         $available_slots = $row['total_slots'] - $row['signed_up'];
+        $is_signed_up = $is_logged_in && in_array($current_user, explode(', ', $row['participants']));
         echo "<tr>
                 <td>{$row['name']}</td>
                 <td>{$row['description']}</td>
@@ -42,15 +44,22 @@ if ($result->num_rows > 0) {
                 <td>{$available_slots}</td>
                 <td>{$row['participants']}</td>
                 <td>";
-        if ($is_logged_in && $available_slots > 0) {
-            echo "<form action='signup.php' method='post'>
-                    <input type='hidden' name='event_id' value='{$row['id']}'>
-                    <input type='submit' value='Sign Up'>
-                  </form>";
-        } else if (!$is_logged_in) {
-            echo "Please log in to sign up";
+        if ($is_logged_in) {
+            if ($is_signed_up) {
+                echo "<form action='dropout.php' method='post'>
+                        <input type='hidden' name='event_id' value='{$row['id']}'>
+                        <input type='submit' value='Drop Out'>
+                      </form>";
+            } else if ($available_slots > 0) {
+                echo "<form action='signup.php' method='post'>
+                        <input type='hidden' name='event_id' value='{$row['id']}'>
+                        <input type='submit' value='Sign Up'>
+                      </form>";
+            } else {
+                echo "No available slots";
+            }
         } else {
-            echo "No available slots";
+            echo "Please log in to sign up";
         }
         // Display delete button for admins
         if ($is_admin) {
