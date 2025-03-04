@@ -1,0 +1,36 @@
+Database event_tracker
+
+tables
+	user
+		username varchar(32) primary key
+		password varchar(255) not null
+		role Enum('user', 'admin') not null default user
+
+	events
+		id varchar(8) (random gen 8 digit hex) primary key
+		name varchar(64) not null
+		description varchar(255)
+		date date
+		time (not sure, use whatever applicaple datatype here)
+		location varchar(64)
+		available_slots tinyint
+
+	event_signups
+		event_id varchar(8)
+		username varchar(32)
+		primary key (event_id, username)
+		foreign key (event_id) references events(id)
+		foreign key (username) references users(username)
+		
+
+NOTES FOR FUTURE IMPLEMENTATION
+add event type (photobooth, spinbooth, etc)
+
+
+CURRENT NOTES
+fix register function
+add shift clocking feature (1w+)
+signup should be replaced with drop out button
+signups should be logged so that the date and time are visible for when the signup was made
+event_signup table needs to be modified to show event name as well for better readability and logging purposes
+event_signup should have new column active which should be changed to inactive when user cancels their signup
