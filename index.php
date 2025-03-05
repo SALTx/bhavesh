@@ -32,9 +32,10 @@ if ($result->num_rows > 0) {
                 <th>Participants</th>
                 <th>Action</th>
             </tr>";
-    while($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) {
         $available_slots = $row['total_slots'] - $row['signed_up'];
-        $is_signed_up = $is_logged_in && in_array($current_user, explode(', ', $row['participants']));
+        $participants = $row['participants'] ?? ''; // Ensure participants is a string
+        $is_signed_up = $is_logged_in && in_array($current_user, explode(', ', $participants));
         echo "<tr>
                 <td>{$row['name']}</td>
                 <td>{$row['description']}</td>
@@ -74,11 +75,11 @@ if ($result->num_rows > 0) {
     if ($is_admin) {
         echo "<tr>
                 <form action='add_event.php' method='post'>
-                <td><input type='text' name='name' required></td>
-                <td><input type='text' name='description'></td>
+                <td><input type='text' name='name' placeholder='Event name' required></td>
+                <td><input type='text' name='description placeholder='Event description'></td>
                 <td><input type='date' name='date' required></td>
                 <td><input type='time' name='time' required></td>
-                <td><input type='text' name='location' required></td>
+                <td><input type='text' name='location' placeholder='Event location' required></td>
                 <td><input type='number' name='available_slots' required min='1'></td>
                 <td colspan='2'><input type='submit' value='Add Event'></td>
                 </form>

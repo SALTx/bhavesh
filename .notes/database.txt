@@ -28,7 +28,7 @@ add event type (photobooth, spinbooth, etc)
 
 
 CURRENT NOTES
-fix register function
+(DONE) fix register function
 add shift clocking feature (1w+)
 signup should be replaced with drop out button
 signups should be logged so that the date and time are visible for when the signup was made
